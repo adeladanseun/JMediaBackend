@@ -3,6 +3,7 @@ from django.utils import timezone
 from django.core.validators import MinValueValidator, MaxValueValidator
 from users.models import User
 from skills.models import Skill, Category
+from decimal import Decimal
 
 # Create your models here.
 class Course(models.Model):
@@ -38,7 +39,7 @@ class Course(models.Model):
     preview_video = models.URLField(null=True, blank=True, help_text="YouTube URL for course preview")
     level = models.IntegerField(choices=LEVEL_CHOICES, default=BEGINNER)
     duration_hours = models.FloatField(default=0.0, help_text="Total course duration in hours")
-    price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, validators=[MinValueValidator(0)])
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'), validators=[MinValueValidator(0)])
     is_free = models.BooleanField(default=False)
     discount_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(0)])
     status = models.IntegerField(choices=STATUS_CHOICES, default=DRAFT)

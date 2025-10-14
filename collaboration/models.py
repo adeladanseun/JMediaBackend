@@ -70,8 +70,8 @@ class Project(models.Model):
     #task_count = models.PositiveIntegerField(default=0)
     #completed_task_count = models.PositiveIntegerField(default=0)
 
-    created_at = models.DateTimeField(null=True, blank=True)
-    updated_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
         if not self.project_lead:
@@ -102,7 +102,7 @@ class Project(models.Model):
     
     def update_progress(self):
         total_tasks = self.tasks.count() # type: ignore
-        completed_tasks = self.tasks.filter(status=Project.COMPLETED).count() # type: ignore
+        completed_tasks = self.tasks.filter(status=Task.COMPLETED).count() # type: ignore
 
         if total_tasks > 0:
             self.progress = (completed_tasks / total_tasks) * 100
@@ -184,8 +184,10 @@ class ProjectMember(models.Model):
 
     @property
     def completion_rate(self):
-        if self.tasks.filter(assigned_to=self) > 0: # type: ignore
-            return (self.tasks.filter(assigned_to=self.user, status=Task.COMPLETED) / self.tasks.filter(assigned_to=self)) * 100  # type: ignore
+        assigned_tasks = self.tasks.filter(assigned_to=self)
+        if assigned_tasks.count() > 0: # type: ignore
+            completed_tasks = self.tasks.filter(assigned_to=self, status=Task.COMPLETED)
+            return (completed_tasks.count() / assigned_tasks.count()) * 100  # type: ignore
         return 0
     
 class ProjectInvitation(models.Model):
@@ -207,7 +209,7 @@ class ProjectInvitation(models.Model):
     role = models.ForeignKey(ProjectRole, on_delete=models.CASCADE, related_name='pending_invites')
 
     message = models.TextField(blank=True)
-    status = models.IntegerField(choice=STATUS, default=PENDING) # type: ignore
+    status = models.IntegerField(choices=STATUS, default=PENDING) # type: ignore
     expires_at = models.DateTimeField(null=True, blank=True)
     responded_at = models.DateTimeField(null=True, blank=True)
 
@@ -218,7 +220,7 @@ class ProjectInvitation(models.Model):
         unique_together = ['project', 'invited_user']
 
     def accept(self):
-        if self.expires_at and self.expires_at < timezone.now().date() and self.status == ProjectInvitation.PENDING:
+        if (not self.expires_at) or (self.expires_at and (self.expires_at > timezone.now() and self.status == ProjectInvitation.PENDING)):
             member, created = ProjectMember.objects.get_or_create(project=self.project, user=self.invited_user, defaults={'role': self.role, 'is_approved': True, 'approved_at': timezone.now(), 'joined_at': timezone.now()})
             self.status = ProjectInvitation.ACCEPTED
             self.responded_at = timezone.now()
@@ -264,7 +266,7 @@ class Task(models.Model):
     description = models.TextField(blank=True, null=True)
 
     priority = models.IntegerField(choices=PRIORITY_LEVEL, default=MEDIUM)
-    status = models.IntegerField(choices=STATUS, default=IN_PROGRESS)
+    status = models.IntegerField(choices=STATUS, default=TODO)
     estimated_hours = models.FloatField(null=True, blank=True, validators=[MinValueValidator(0)], help_text="Estimated hours to complete")
     actual_hours = models.FloatField(null=True, blank=True, validators=[MinValueValidator(0)], help_text="Actual hours spent")
 
@@ -284,7 +286,7 @@ class Task(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['order', 'priority', 'due_date']
+        ordering = ['priority', 'due_date']
 
     def __str__(self):
         return f"{self.title} - {self.project.title}"
@@ -309,11 +311,11 @@ class Task(models.Model):
             self.progress = 100.0
             self.completed_at = timezone.now()
             self.save()
-
-        self.project.update_progress()
+            self.project.update_progress()
 
     def update_progress(self, progress):
         progress = max(0, min(100, progress))
+        self.progress = progress
         if progress == 100:
             self.complete_task()
         elif progress > 0 and self.status == Task.TODO:
