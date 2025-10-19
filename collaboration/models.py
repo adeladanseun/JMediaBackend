@@ -184,7 +184,7 @@ class ProjectMember(models.Model):
 
     @property
     def completion_rate(self):
-        assigned_tasks = self.tasks.filter(assigned_to=self)
+        assigned_tasks = self.tasks.filter(assigned_to=self) # pyright: ignore[reportAttributeAccessIssue]
         if assigned_tasks.count() > 0: # type: ignore
             completed_tasks = self.tasks.filter(assigned_to=self, status=Task.COMPLETED)
             return (completed_tasks.count() / assigned_tasks.count()) * 100  # type: ignore

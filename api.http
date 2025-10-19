@@ -1,0 +1,35 @@
+GET http://localhost:8000/courses/api/
+
+
+### admin user
+POST http://localhost:8000/api/token/
+Content-Type: application/json
+
+{
+    "email": "adeladanseun@gmail.com",
+    "password": "adeladanseun"
+}
+
+### mentor user
+POST http://localhost:8000/api/token/ 
+Content-Type: application/json
+
+{
+    "email": "adeladansegun@gmail.com",
+    "password": "adeladansegun"
+}
+
+###
+GET http://localhost:8000/courses/api/course/
+
+###
+POST http://localhost:8000/courses/api/course/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzYwNjUwNTg3LCJpYXQiOjE3NjA2NTAyODcsImp0aSI6IjA3MGRkMjkzYTVmODRmNDdiMDQ1NzRkOTA3NDkwZGU4IiwidXNlcl9pZCI6IjEifQ.4ycB8o8KaBJXEqjDBQoZcF1VZWhpoEdyGHpJGdhOxkI
+
+{
+    "title": "Java",
+    "description": "java programming language",
+    "mentor": 3,
+    "skills_covered": [1]
+}

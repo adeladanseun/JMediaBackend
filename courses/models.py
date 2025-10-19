@@ -83,7 +83,8 @@ class Course(models.Model):
     
     #@property
     def update_rating(self):
-        reviews = self.enrollments.review.filter(is_approved=True) #flag might need to get all enrollments and iterate through each review for the rating to sum up
+        #reviews = self.enrollments.review.filter(is_approved=True) # pyright: ignore[reportAttributeAccessIssue] #flag might need to get all enrollments and iterate through each review for the rating to sum up
+        reviews = CourseReview.objects.filter(enrollment__course=self, is_approved=True)
         if reviews.exists():
             self.average_rating = sum([review.rating for review in reviews]) / reviews.count()
             self.review_count = reviews.count()
@@ -116,7 +117,7 @@ class Module(models.Model):
         return f"{self.course.title} - {self.title}"
     
     def get_lessons_count(self):
-        return self.lessons.count()
+        return self.lessons.count() # pyright: ignore[reportAttributeAccessIssue]
     
 class Lesson(models.Model):
     VIDEO = 0

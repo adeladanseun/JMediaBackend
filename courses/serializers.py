@@ -12,7 +12,10 @@ class CourseSerializer(serializers.ModelSerializer):
     # progress = serializers.ReadOnlyField()
     class Meta:
         model = Course
-        fields = ['id', 'title', 'description', 'mentor', 'level', 'status', 'thumbnail']
+        fields = ['id', 'title', 'description', 'mentor', 
+                  'level', 'status', 'thumbnail', 'skills_covered', 
+                  'price', 'students_count', 'is_free',
+                  'published_at', 'duration_hours']
         read_only_fields = ['id', 'status']
 
 # Serializes Module model
