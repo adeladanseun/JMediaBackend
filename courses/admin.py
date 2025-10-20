@@ -13,13 +13,13 @@ class CourseAdmin(admin.ModelAdmin):
 
 @admin.register(Module)
 class ModuleAdmin(admin.ModelAdmin):
-    list_display = ['title', 'course', 'order', 'is_active', 'created_at']
+    list_display = ['title', 'course', 'is_active', 'created_at']
     list_filter = ['course', 'is_active']
     search_fields = ['title', 'course__title']
 
 @admin.register(Lesson)
 class LessonAdmin(admin.ModelAdmin):
-    list_display = ['title', 'module', 'lesson_type', 'order', 'is_preview', 'is_active']
+    list_display = ['title', 'module', 'lesson_type', 'is_preview', 'is_active']
     list_filter = ['lesson_type', 'is_preview', 'is_active', 'module__course']
     search_fields = ['title', 'module__title', 'module__course__title']
     readonly_fields = ['created_at', 'updated_at']

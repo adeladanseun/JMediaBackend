@@ -6,6 +6,7 @@ router = DefaultRouter()
 urlpatterns = [
     path('api/', views.api_root, name='course_api_root'), 
     path('api/course/', views.CourseListView.as_view(), name='api_course_list'),
+    path('api/course/<int:pk>/', views.CourseDetailView.as_view(), name='api_course_detail'),
     path('api/module/', views.ModuleListView.as_view(), name='api_module_list'),
     path('api/lesson/', views.LessonListView.as_view(), name='api_lesson_list'),
     path('api/enrollment/', views.EnrollmentListView.as_view(), name='api_enrollment_list'),

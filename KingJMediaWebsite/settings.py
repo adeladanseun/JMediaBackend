@@ -11,7 +11,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-@oc@+z%mj%j^dpe8$tw9+w+t3en^!5ir0yy6ikjkhm5g%17!l$'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True #Setting to false created some issues with static files
 
 ALLOWED_HOSTS = ['*']
 
@@ -27,6 +27,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+    
+    
+    
     'core',
     'skills',
     'users',

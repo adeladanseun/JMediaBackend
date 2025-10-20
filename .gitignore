@@ -1,7 +1,16 @@
-migrations
-/migrations
-**/migrations
-.sqlite3
-__pycache__
-/__pycache__
-**/__pycache__
+# Static and Media files
+/static/
+/staticfiles/
+/media/
+
+# Database
+db.sqlite3
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django migrations
+**/migrations/**
+!**/migrations/__init__.py

@@ -3,7 +3,8 @@ from django.urls import path, include
 from rest_framework import routers
 from courses import views
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-
+from django.conf.urls.static import static
+from django.conf import settings
 
 #router = routers.DefaultRouter()
 #router.register('courses', views.CourseListView)
@@ -15,4 +16,6 @@ urlpatterns = [
     path('courses/', include('courses.urls')),
     #path('api/', include(router.urls)),
     
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

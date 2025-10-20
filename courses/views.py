@@ -20,6 +20,10 @@ class CourseListView(generics.ListCreateAPIView):
             self.permission_classes = [IsAdminUser | IsMentor]
         return super().get_permissions()
 
+class CourseDetailView(generics.RetrieveAPIView):
+    queryset = Course.objects.all()
+    serializer_class = CourseSerializer
+    
 @api_view(['GET'])
 def api_root(request):
     return Response(

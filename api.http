@@ -25,7 +25,7 @@ GET http://localhost:8000/courses/api/course/
 ###
 POST http://localhost:8000/courses/api/course/
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzYwNjUwNTg3LCJpYXQiOjE3NjA2NTAyODcsImp0aSI6IjA3MGRkMjkzYTVmODRmNDdiMDQ1NzRkOTA3NDkwZGU4IiwidXNlcl9pZCI6IjEifQ.4ycB8o8KaBJXEqjDBQoZcF1VZWhpoEdyGHpJGdhOxkI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzYwOTE0ODE1LCJpYXQiOjE3NjA5MTQ1MTUsImp0aSI6ImYyNGU1Y2U4MDZhYjRlMWRiNzJiNTFlMGM1MWQ1ZmVkIiwidXNlcl9pZCI6IjQifQ.j6fmkK6ywBNru_Z0mjcxswlTUNXg-8iz8RwbNKa1fAo
 
 {
     "title": "Java",
@@ -33,3 +33,6 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
     "mentor": 3,
     "skills_covered": [1]
 }
+
+###
+GET http://localhost:8000/courses/api/course/3/

@@ -103,14 +103,14 @@ class Module(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='modules')
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True, null=True)
-    order = models.PositiveIntegerField(default=0)
+    #order = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['order']
+        ordering = ['-created_at']
         #unique_together = ['course', 'order']
 
     def __str__(self):
@@ -142,7 +142,7 @@ class Lesson(models.Model):
     article_content = models.TextField(blank=True, null=True)
     attachment = models.FileField(upload_to='lesson_attachments/', blank=True, null=True, help_text='PDF, PowerPoint or other resources')
     duration_minutes = models.PositiveIntegerField(default=0, help_text="Lesson duration in minutes")
-    order = models.PositiveIntegerField(default=0)
+    #order = models.PositiveIntegerField(default=0)
     is_preview = models.BooleanField(default=False, help_text="Mark if this lesson can be previewed without enrollment")
     is_active = models.BooleanField(default=True)
 
@@ -150,7 +150,7 @@ class Lesson(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['order']
+        ordering = ['-created_at'] 
         #unique_together = ['module', 'order']
 
     def __str__(self):
