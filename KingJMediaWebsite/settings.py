@@ -1,4 +1,5 @@
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,6 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'corsheaders',
     
     
     
@@ -40,6 +42,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -119,6 +122,37 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
     ]
 }
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=8),
+    'ROTATE_REFRESH_TOKENS': True, # Recommended for security
+    'BLACKLIST_AFTER_ROTATION': True, # Recommended for security
+}
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8001", # For development
+]
+
+CORS_ALLOW_METHODS = [
+        "DELETE",
+        "GET",
+        "OPTIONS",
+        "POST",
+        "PUT",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
+#EMAIL_BACKEND = 'django.core.mail.backend.console.EmailBackend' #for development only
+#for production
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 8888
+EMAIL_USE_TLS = False
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+EMAIL_USE_SSL = False
+DEFAULT_FROM_EMAIL = 'noreply@yourdomain.com'
 
 LOGIN_URL = ''
 LOGIN_REDIRECT_URL = ''

@@ -3,8 +3,12 @@
 /staticfiles/
 /media/
 
+/test-site/
+
 # Database
 db.sqlite3
+
+htmlview.html
 
 # Python cache files
 __pycache__/
@@ -14,3 +18,4 @@ __pycache__/
 # Django migrations
 **/migrations/**
 !**/migrations/__init__.py
+

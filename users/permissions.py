@@ -14,3 +14,7 @@ class IsStaff(permissions.BasePermission):
     def has_object_permissions(self, request, view, obj):
         return request.user.is_staff
     
+class IsNotAuthenticated(permissions.BasePermission):
+    def has_object_permissions(self, request, view, obj):
+        return not request.user.is_authenticated
+    

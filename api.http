@@ -36,3 +36,31 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
 
 ###
 GET http://localhost:8000/courses/api/course/3/
+
+
+###
+POST http://localhost:8000/users/api/token/
+Content-Type: application/json
+
+{
+    "email": "junkie_mail@gmail.com",
+    "password": "this_is_it"
+}
+
+###
+POST http://localhost:8000/users/create/
+Content-Type: application/json
+
+{
+    "email": "seun123@gmail.com",
+    "password": "seun123",
+    "password2": "seun123"
+}
+
+###
+POST http://localhost:8000/users/password/reset/
+Content-Type: application/json
+
+{
+    "email": "seun123@gmail.com"
+}
