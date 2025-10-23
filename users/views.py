@@ -2,6 +2,7 @@ from django.shortcuts import render
 from . import serializers
 from . import models
 from . import permissions
+from . import emails
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -39,55 +40,88 @@ class PasswordResetRequestView(APIView):
             email = serializer.validated_data['email']
             user = models.User.objects.get(email=email)
 
-            token = default_token_generator.make_token(user)
-            uid = urlsafe_base64_encode(force_bytes(user.pk))
-
-            reset_url = f"http://localhost:8000/users/password/reset/{uid}/{token}/"
+            models.PasswordResetCode.objects.filter(user=user).update(is_used=True)#already taken care of in signals.py
+            
+            reset_code = models.PasswordResetCode.objects.create(user=user)
 
             subject = "Password Reset Request"
-            message = f"""
-            Hello {user.email},
-
-            You requested a password reset. Click the link below to reset your password:
-            {reset_url}
-
-            If you did not request this, please ignore this email.
-            Regards,
-            King J Media Team
-            """
-            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL,
-                      recipient_list=[user.email], fail_silently=False)
+            context = {
+                'subject': subject,
+                'user': user,
+                'reset_code': reset_code,
+            }
+            emails.EmailService.send_password_reset_email(context)
+            
             return Response({
                 "details": "Check your email"
             }, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class PasswordResetVerifyView(APIView):
+    permission_classes = [AllowAny]
     
+    def post(self, request):
+        serializer = serializers.PasswordResetVerifySerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.validated_data['user']
+            reset_code = serializer.validated_data['reset_code']
+            
+            return Response ({
+                "detail": "Verification code is valid",
+                "email": user.email,
+                "code": reset_code.code
+            }, status=status.HTTP_200_OK
+            )
+        return Response(serializers.errors, status.HTTP_400_BAD_REQUEST)
+    
+
 class PasswordResetConfirmView(APIView):
     permission_classes = [AllowAny]
     
     def post(self, request):
         serializer = serializers.PasswordResetConfirmSerializer(data=request.data)
         if serializer.is_valid():
-            uid = serializer.validated_data['uid']
-            token = serializer.validated_data['token']
-            new_password = serializer.validated_data['new_password']
+            user = serializer.validated_data['user']
+            reset_code = serializer.validated_data['reset_code']
+            new_password = serializer.validated_data['password1']
 
-            try:
-                user_id = force_str(urlsafe_base64_decode(uid))
-                user = models.User.objects.get(pk=user_id)
-                
-                if default_token_generator.check_token(user, token):
-                    user.set_password(new_password)
-                    user.save()
-                    return Response({
-                        "details": "Password has been reset successfully."
-                    }, status=status.HTTP_200_OK)
-                else:
-                    return Response({
-                        "details": "Invalid or expired token"
-                    }, status=status.HTTP_400_BAD_REQUEST)
-            except (TypeError, ValueError, OverflowError, models.User.DoesNotExist):
-                return Response({
-                    "details": "Invalid reset link"
-                }, status=status.HTTP_400_BAD_REQUEST)
+            user.set_password(new_password)
+            user.save()
+            
+            reset_code.mark_used()
+            
+            models.PasswordResetCode.objects.filter(
+                user=user,
+                is_used=False,
+            ).update(is_used=True)
+            
+            return Response(
+                {"detail": "Password has been reset successfully."},
+                status=status.HTTP_200_OK
+            )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class passwordChangeView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request):
+        serializer = serializers.passwordChangeSerializer(
+            data=request.data,
+            context={
+                'request': request,
+            }
+            )
+        
+        if serializer.is_valid():
+            ##serializer already checks if the password is valid
+            request.user.set_password(serializer.validated_data['password1'])
+            return Response({
+                "details": "Password change successful"
+            })
+        return Response({
+            "details": "Error changing password"
+        })
+            
+            
+            
+            

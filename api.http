@@ -64,3 +64,107 @@ Content-Type: application/json
 {
     "email": "seun123@gmail.com"
 }
+###password_changed
+
+###
+POST http://localhost:8000/users/api/token/
+Content-Type: application/json
+
+{
+    "email": "seun123@gmail.com",
+    "password": "jjjj"
+}
+
+### initiate reset request
+POST http://localhost:8000/users/password/reset/
+Content-Type: application/json
+
+{
+    "email": "seun123@gmail.com"
+}
+
+### verify reset account with email code
+POST http://localhost:8000/users/password/reset/verify/
+Content-Type: application/json
+
+{
+    "email": "seun123@gmail.com",
+    "code": "3552"
+}
+
+### create new account password
+POST http://localhost:8000/users/password/reset/confirm/
+Content-Type: application/json
+
+{
+    "email": "seun123@gmail.com",
+    "code": "3552",
+    "password1": "password_changed1",
+    "password2": "password_changed1"
+}
+
+###
+GET http://localhost:8000/users/password/change/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzYxNjYyNjQ3LCJpYXQiOjE3NjEyMzA2NDgsImp0aSI6IjRmODNiMDNhNjQ3OTQwYmM4MjFlMDNjMDIyM2FhMzhjIiwidXNlcl9pZCI6IjcifQ.hXImI6NhYsPpBB-itpW4N-k_hcYPo7mV330JoIXX9L8
+
+
+###Authentication test
+###User creation
+POST http://localhost:8000/users/create/
+Content-Type: application/json
+
+{
+    "email": "new_email@gmail.com",
+    "password": "new_password",
+    "password2": "new_password",
+    "role": 0,
+    "first_name": "Optional",
+    "last_name": "Optional"
+}
+
+#### Login test
+POST http://localhost:8000/users/api/token/
+Content-Type: application/json
+
+{
+    "email": "new_email@gmail.com",
+    "password": "new_password"
+}
+
+### Password reset test that sends to email
+POST http://localhost:8000/users/password/reset/
+Content-Type: application/json
+
+{
+    "email": "new_email@gmail.com"
+}
+
+### Password code obtained from email
+POST http://localhost:8000/users/password/reset/verify/
+Content-Type: application/json
+
+{
+    "email": "new_email@gmail.com",
+    "code": "2943"
+}
+
+#### Password change with generated code
+POST http://localhost:8000/users/password/reset/confirm/ 
+Content-Type: application/json
+
+{
+    "email": "new_email@gmail.com",
+    "code": "2943",
+    "password1": "a_new_password",
+    "password2": "a_new_password"
+}
+
+#### Try logging in with new password
+POST http://localhost:8000/users/api/token/
+Content-Type: application/json
+
+{
+    "email": "new_email@gmail.com",
+    "password": "new_password"
+}

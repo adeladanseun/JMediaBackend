@@ -30,8 +30,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     
-    
-    
     'core',
     'skills',
     'users',
@@ -129,6 +127,10 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True, # Recommended for security
 }
 
+RESET_CODE_VALID_MINUTES = 15
+RESET_CODE_LENGTH = 4
+PASSWORD_MIN_LENGTH = 5
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8001", # For development
 ]
@@ -152,7 +154,7 @@ EMAIL_USE_TLS = False
 EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
 EMAIL_USE_SSL = False
-DEFAULT_FROM_EMAIL = 'noreply@yourdomain.com'
+DEFAULT_FROM_EMAIL = 'noreply@kingjmedia.com'
 
 LOGIN_URL = ''
 LOGIN_REDIRECT_URL = ''

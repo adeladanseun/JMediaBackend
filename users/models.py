@@ -2,6 +2,9 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.core.validators import RegexValidator
 from django.utils import timezone
+from django.conf import settings
+from datetime import timedelta
+from random import randint
 
 from skills.models import Skill
 
@@ -15,8 +18,11 @@ class CustomUserManager(BaseUserManager):
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
+        if user.role == User.ADMIN:
+            user.is_staff = True
         user.save()
         return user
+    
     def create_superuser(self, email, password):
         user = self.create_user(email, password=password)
         user.is_staff = True
@@ -115,6 +121,34 @@ class UserProfile(models.Model):
     def __str__(self):
         return f"Profile of {self.user.email}"
 
+class PasswordResetCode(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    code = models.CharField(max_length=settings.RESET_CODE_LENGTH)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+    is_used = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return f"{self.user.email} - Valid: {self.is_valid}"
+    
+    def save(self, *args, **kwargs):
+        if not self.code:
+            self.code = self.generate_code()
+        if not self.expires_at:
+            self.expires_at = timezone.now() + timedelta(minutes=settings.RESET_CODE_VALID_MINUTES)
+        super().save(*args, **kwargs)
+        
+    def generate_code(self):
+        """Generate a 4-digit code"""
+        return str(randint(1000, 9999))
+    
+    @property
+    def is_valid(self):
+        """Checks if code has not been used and is not expired"""
+        return ((not self.is_used) and (timezone.now() < self.expires_at))
 
-
+    def mark_used(self):
+        """Mark code as used"""
+        self.is_used = True
+        self.save()
 

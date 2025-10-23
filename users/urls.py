@@ -10,5 +10,8 @@ urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     
-    path('password/reset/<str:uid>/<str:token>/', views.PasswordResetRequestView.as_view(), name='password_reset'),
+    path('password/reset/', views.PasswordResetRequestView.as_view(), name='password_reset'),
+    path('password/reset/verify/', views.PasswordResetVerifyView.as_view(), name='password_reset_verify'),
+    path('password/reset/confirm/', views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('password/change/', views.passwordChangeView.as_view(), name='password_change_view'),
 ]
